@@ -2,10 +2,15 @@ using System;
 
 namespace Natori.Pooling
 {
+    public interface IPoolReturnAcceptor<T>
+    {
+        void ReturnInstance(T instance);
+    }
+
     /// <summary>
     /// 純粋なプール（インスタンスの生成を行わない）
     /// </summary>
-    public sealed class Pool<T>
+    public sealed class Pool<T> : IPoolReturnAcceptor<T>
     {
         private T[] _queue;
 
@@ -17,7 +22,7 @@ namespace Natori.Pooling
 
         private readonly int _additionalBufferSizeWhenResizing;
 
-        public Pool(int initialBufferSize = 16,int additionalBufferSizeWhenResizing = 16)
+        public Pool(int initialBufferSize = 16, int additionalBufferSizeWhenResizing = 16)
         {
             _queue = new T[initialBufferSize];
             _additionalBufferSizeWhenResizing = additionalBufferSizeWhenResizing;
@@ -27,7 +32,7 @@ namespace Natori.Pooling
         {
             var lengthMinusOne = _length - 1;
             var instance = _queue[lengthMinusOne];
-            _queue[lengthMinusOne] = default;//ムムー
+            _queue[lengthMinusOne] = default; //ムムー
             _length = lengthMinusOne;
             return instance;
         }
@@ -36,8 +41,9 @@ namespace Natori.Pooling
         {
             if (_queue.Length <= _length)
             {
-                Array.Resize(ref _queue,_queue.Length + _additionalBufferSizeWhenResizing);
+                Array.Resize(ref _queue, _queue.Length + _additionalBufferSizeWhenResizing);
             }
+
             _queue[_length] = instance;
             _length++;
         }

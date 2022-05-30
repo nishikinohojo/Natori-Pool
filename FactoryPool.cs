@@ -5,7 +5,7 @@ namespace Natori.Pooling
     /// <summary>
     /// インスタンス生産もできるプール
     /// </summary>
-    public sealed class FactoryPool<T>
+    public sealed class FactoryPool<T> : IPoolReturnAcceptor<T>
     {
         private readonly Pool<T> _pool = new Pool<T>();
 
